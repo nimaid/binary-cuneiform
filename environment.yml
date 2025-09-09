@@ -1,0 +1,8 @@
+name: binary-cuneiform
+channels:
+  - defaults
+dependencies:
+  - python=3.10*
+  - pip
+  - pip:
+    - 
