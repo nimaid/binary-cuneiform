@@ -9,4 +9,20 @@ The current best method of preserving data for future generations is to store th
 To do this, we must find a way to efficiently, reliably, and logically encode binary data as impressions on a surface, ideally linear marks of equal length for ease of writing. The system proposed here is a first attempt at creating such a system. Because it is directly inspired by the way cuneiform was written, and because it represents arbitrary binary data, I have decided to name this system "Binary Cuneiform".
 
 # Description
-WIP
+Individual bytes are encoded into distinct characters. Each of these 256 characters shall be composed of the following:
+- 2 columns of 4 "bit strokes"
+  - The bits are read top-to-bottom, left-to-right
+  - An upper-left to lower-right diagonal line (`╲`) shall represent a 0 bit
+  - A lower-left to upper-right diagonal line (`╱`) shall represent a 1 bit
+- 1 vertical separator (`│`), no less than 1 stroke but no more than 4 strokes tall, centered right of the bit strokes
+- 1 horizontal separator (`─`), no less than 1 stroke but no more than 2 strokes wide, centered underneath the bit strokes
+
+For example, the byte 0b01100101 could be written as follows:
+```
+╲ ╲
+╱ ╱ │
+╱ ╲ │
+╲ ╱
+ ─
+```
+
