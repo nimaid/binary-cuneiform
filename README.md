@@ -12,8 +12,8 @@ To do this, we must find a way to efficiently, reliably, and logically encode bi
 Individual bytes are encoded into distinct characters. Each of these 256 characters shall be composed of the following:
 - 2 columns of 4 "bit strokes"
   - The bits are read top-to-bottom, left-to-right
-  - An upper-left to lower-right diagonal line (`╲`) shall represent a 0 bit
-  - A lower-left to upper-right diagonal line (`╱`) shall represent a 1 bit
+  - An upper-left to lower-right diagonal stroke (`╲`) shall represent a 0 bit
+  - A lower-left to upper-right diagonal stroke (`╱`) shall represent a 1 bit
 - 1 vertical separator (`│`), no less than 1 stroke but no more than 4 strokes tall, centered right of the bit strokes
 - 1 horizontal separator (`─`), no less than 1 stroke but no more than 2 strokes wide, centered underneath the bit strokes
 
