@@ -9,6 +9,64 @@ from braillebyte import encode_braille, decode_braille, is_braille
 BLOCK_SIZE = 4096
 
 
+def convert_encode(input: Path, output: Path | None = None, endian_reverse: bool = False, block_size: int = BLOCK_SIZE):
+    if output is None:
+        print("\"", end="")
+    else:
+        fo = open(output, "w", encoding="utf-8")
+    
+    with open(input, "rb") as f:
+        while True:
+            block = f.read(BLOCK_SIZE)
+            if not block:
+                break
+
+            block_braille = encode_braille(bytearray(block), endian_reverse=endian_reverse)
+            
+            if output is None:
+                print(block_braille, end="")
+            else:
+                fo.write(block_braille)
+        
+        if output is None:
+            print("\"")
+        else:
+            fo.close()
+
+
+def convert_decode(input: Path | str, output: Path, endian_reverse: bool = False, block_size: int = BLOCK_SIZE):
+    if is_braille(input):
+        file_input = False
+        position = 0
+        length = len(input)
+    else:
+        file_input = True
+        f = open(Path(input), "r", encoding="utf-8")
+    
+    with open(output, "wb")  as fo:
+        while True:
+            if file_input:
+                block = f.read(block_size)
+                if not block:
+                    break
+            else:
+                if position == length:
+                    break
+                    
+                end_position = position + block_size
+                if end_position > length:
+                    end_position = length
+                    
+                block = input[position:end_position]
+                position = end_position
+            
+            block_bytes = decode_braille(block, endian_reverse=endian_reverse)
+            fo.write(block_bytes)
+    
+    if file_input:
+        f.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Converts between binary files and braille.")
     
@@ -22,65 +80,14 @@ def main():
     if args.encode is not None and args.decode is not None:
         print("Cannot encode and decode at the same time, exiting...")
         return 1
-    
     if args.encode is not None:
-        if args.output is None:
-            print("\"", end="")
-        else:
-            fo = open(args.output, "w", encoding="utf-8")
-        
-        with open(args.encode, "rb") as f:
-            while True:
-                block = f.read(BLOCK_SIZE)
-                if not block:
-                    break
-
-                block_braille = encode_braille(bytearray(block), endian_reverse=args.reverse)
-                
-                if args.output is None:
-                    print(block_braille, end="")
-                else:
-                    fo.write(block_braille)
-            
-            if args.output is None:
-                print("\"")
-            else:
-                fo.close()
+        convert_encode(input=args.encode, output=args.output, endian_reverse=args.reverse)
     elif args.decode is not None:
         if args.output is None:
             print("No output file specified to decode to, exiting...")
             return 1
         
-        if is_braille(args.decode):
-            file_input = False
-            position = 0
-            length = len(args.decode)
-        else:
-            file_input = True
-            f = open(Path(args.decode), "r", encoding="utf-8")
-        
-        with open(args.output, "wb")  as fo:
-            while True:
-                if file_input:
-                    block = f.read(BLOCK_SIZE)
-                    if not block:
-                        break
-                else:
-                    if position == length:
-                        break
-                        
-                    end_position = position + BLOCK_SIZE
-                    if end_position > length:
-                        end_position = length
-                        
-                    block = args.decode[position:end_position]
-                    position = end_position
-                
-                block_bytes = decode_braille(block, endian_reverse=args.reverse)
-                fo.write(block_bytes)
-        
-        if file_input:
-            f.close()
+        convert_decode(input=args.decode, output=args.output, endian_reverse=args.reverse)
     else:
         print("Nothing to encode/decode, exiting...")
         return 1
