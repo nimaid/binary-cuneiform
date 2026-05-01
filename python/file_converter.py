@@ -15,6 +15,7 @@ def main():
     parser.add_argument("-e", "--encode", type=Path, help="encode a binary file to braille text")
     parser.add_argument("-d", "--decode", type=str, help="decode braille text to a binary file")
     parser.add_argument("-o", "--output", type=Path, help="where to save the decoded file / encoded text")
+    parser.add_argument("-r", "--reverse", action='store_true', help="reverses the endianness of each byte")
 
     args = parser.parse_args()
     
@@ -34,7 +35,7 @@ def main():
                 if not block:
                     break
 
-                block_braille = encode_braille(bytearray(block))
+                block_braille = encode_braille(bytearray(block), endian_reverse=args.reverse)
                 
                 if args.output is None:
                     print(block_braille, end="")
@@ -75,7 +76,7 @@ def main():
                     block = args.decode[position:end_position]
                     position = end_position
                 
-                block_bytes = decode_braille(block)
+                block_bytes = decode_braille(block, endian_reverse=args.reverse)
                 fo.write(block_bytes)
         
         if file_input:
