@@ -16,13 +16,14 @@ Individual bytes are encoded into distinct characters. Each of these 256 charact
   - A lower-left to upper-right diagonal stroke (`╱`) shall represent a 1 bit
 - 1 vertical separator (`│`), no less than 1 stroke but no more than 4 strokes tall, centered right of the bit strokes
 - 1 horizontal separator (`─`), no less than 1 stroke but no more than 2 strokes wide, centered underneath the bit strokes
+- Upper left is LSB and lower right is MSB
 
 For example, the byte 0b01100101 could be written as follows:
 ```
-╲ ╲
-╱ ╱ │
-╱ ╲ │
-╲ ╱
+/ \
+\ / │
+/ / │
+\ \
  ─
 ```
 
