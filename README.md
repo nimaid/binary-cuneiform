@@ -34,7 +34,7 @@ Multiple bytes are read in rows from left-to-right, top-to-bottom.
 ## Unicode Alternative: BrailleByte
 TODO
 
-<p align="center" style="align-items: center;"><img src="img/braille_unicode.png" height="500px" alt="Braille Unicode Bit Layout"/> ➡️ <img src="img/braillebyte.png" height="500px" alt="Bit Layout"/></p>
+<p align="center" style="vertical-align:middle"><img src="img/braille_unicode.png" height="500px" alt="Braille Unicode Bit Layout"/> ➡️ <img src="img/braillebyte.png" height="500px" alt="Bit Layout"/></p>
 
 ## Resources
 WIP
