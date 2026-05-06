@@ -11,9 +11,14 @@ BLOCK_SIZE = 4096
 
 def convert_encode(input: Path, output: Path | None = None, big_endian: bool = True, block_size: int = BLOCK_SIZE):
     if output is None:
-        print("\"", end="")
+        print("<", end="")
+        if input.suffix:
+            print(f"{input.suffix[1:]}|", end="")
     else:
         fo = open(output, "w", encoding="utf-8")
+        #fo.write("<")
+        #if input.suffix:
+        #    fo.write(f"{input.suffix[1:]}|")
     
     with open(input, "rb") as f:
         while True:
@@ -29,8 +34,9 @@ def convert_encode(input: Path, output: Path | None = None, big_endian: bool = T
                 fo.write(block_braille)
         
         if output is None:
-            print("\"")
+            print(">")
         else:
+            #fo.write(">")
             fo.close()
 
 
