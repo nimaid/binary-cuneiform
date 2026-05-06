@@ -18,6 +18,8 @@ Individual bytes are encoded into distinct characters. Each of these 256 charact
 - 1 horizontal separator (`─`), no less than 1 stroke but no more than 2 strokes wide, centered underneath the bit strokes
 - Upper left is MSB and lower right is LSB
 
+<p align="center"><img src="img/braillebyte.png" height="500px" alt="Bit Layout"/></p>
+
 For example, the byte 0b01100101 could be written as follows:
 ```
 \ \
@@ -31,6 +33,8 @@ Multiple bytes are read in rows from left-to-right, top-to-bottom.
 
 ## Unicode Alternative: BrailleByte
 TODO
+
+<p align="center"><img src="img/braille_unicode.png" height="500px" alt="Braille Unicode Bit Layout"/> ➡️ <img src="img/braillebyte.png" height="500px" alt="Bit Layout"/></p>
 
 ## Resources
 WIP
