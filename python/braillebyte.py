@@ -23,11 +23,11 @@ def endian_swap_byte(data: int):
     return new_byte
 
 
-def encode_braille_byte(data: int, endian_reverse: bool = False):
+def encode_braille_byte(data: int, big_endian: bool = True):
     if data < 0 or data > 255:
         raise ValueError(f"Input is out of range for uint8 (0 - 255): {data}")
     
-    if endian_reverse:
+    if big_endian:
         data = endian_swap_byte(data)
     
     sub_address_a = (data & 0b01110000) >> 4
@@ -55,7 +55,7 @@ def is_braille_byte(data: str | int):
         return True
 
 
-def decode_braille_byte(data: str, endian_reverse: bool = False):
+def decode_braille_byte(data: str, big_endian: bool = True):
     address = ord(data)
 
     if not is_braille_byte(address):
@@ -71,17 +71,17 @@ def decode_braille_byte(data: str, endian_reverse: bool = False):
 
     data_out = (block_a << 7) | (sub_address_a << 4) | (block_b << 3) | sub_address_b
     
-    if endian_reverse:
+    if big_endian:
         data_out = endian_swap_byte(data_out)
     
     return data_out
 
 
 # Multi-Byte Functions
-def encode_braille(data: bytearray, endian_reverse: bool = False):
+def encode_braille(data: bytearray, big_endian: bool = True):
     braille = ""
     for byte in data:
-        braille += encode_braille_byte(byte, endian_reverse=endian_reverse)
+        braille += encode_braille_byte(byte, big_endian=big_endian)
     
     return braille
 
@@ -96,10 +96,10 @@ def is_braille(data: str):
     return True
 
 
-def decode_braille(data: str, endian_reverse: bool = False):
+def decode_braille(data: str, big_endian: bool = True):
     values = bytearray()
     
     for char in data:
-        values.append(decode_braille_byte(char, endian_reverse=endian_reverse))
+        values.append(decode_braille_byte(char, big_endian=big_endian))
     
     return values
