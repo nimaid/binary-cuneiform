@@ -22,10 +22,10 @@ Individual bytes are encoded into distinct characters. Each of these 256 charact
 
 For example, the byte 0b01100101 could be written as follows:
 ```
-\ \
-/ / │
-/ \ │
-\ /
+╲ ╲
+╱ ╱ │
+╱ ╲ │
+╲ ╱
  ─
 ```
 
