@@ -32,7 +32,13 @@ For example, the byte 0b01100101 could be written as follows:
 Multiple bytes are read in rows from left-to-right, top-to-bottom.
 
 ## Unicode Alternative: BrailleByte
-TODO
+According to [The Unicode Standard](https://www.unicode.org/charts/PDF/U2800.pdf), every 8-dot braille character can be made by taking the starting code point of `0x2800` and adding an 8-bit value that corresponds to the dots as follows:
+```
+0 3
+1 4
+2 5
+6 7
+```
 
 <p align="center"><img src="img/braille_unicode.png" height="500px" alt="Braille Unicode Bit Layout"/></p>
 
