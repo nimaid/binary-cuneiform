@@ -1,46 +1,6 @@
 # Constants from: https://www.unicode.org/charts/PDF/U2800.pdf
 BASE_ADDRESS = 0x2800
-BLOCK_OFFSET = 1 << 6
-BLOCKS = 4
-
-MAX_ADDRESS = (BASE_ADDRESS + (BLOCK_OFFSET * BLOCKS)) - 1
-
-
-# Single Byte Functions
-def endian_swap_byte(data: int):
-    if data < 0 or data > 255:
-        raise ValueError(f"Input is out of range for uint8 (0 - 255): {data}")
-    
-    new_byte = (data & 0b10000000) >> 7
-    new_byte |= (data & 0b01000000) >> 5
-    new_byte |= (data & 0b00100000) >> 3
-    new_byte |= (data & 0b00010000) >> 1
-    new_byte |= (data & 0b00001000) << 1
-    new_byte |= (data & 0b00000100) << 3
-    new_byte |= (data & 0b00000010) << 5
-    new_byte |= (data & 0b00000001) << 7
-    
-    return new_byte
-
-
-def encode_braille_byte(data: int, big_endian: bool = True):
-    if data < 0 or data > 255:
-        raise ValueError(f"Input is out of range for uint8 (0 - 255): {data}")
-    
-    if big_endian:
-        data = endian_swap_byte(data)
-    
-    sub_address_a = (data & 0b01110000) >> 4
-    sub_address_b = data & 0b00000111
-    sub_address = (sub_address_a << 3) | sub_address_b
-
-    block_a = (data & 0b10000000) >> 7
-    block_b = (data & 0b00001000) >> 3
-    block = (block_a << 1) | block_b
-
-    address = BASE_ADDRESS + (BLOCK_OFFSET * block) + sub_address
-
-    return chr(address)
+MAX_ADDRESS = 0x28FF
 
 
 def is_braille_byte(data: str | int):
@@ -55,37 +15,45 @@ def is_braille_byte(data: str | int):
         return True
 
 
-def decode_braille_byte(data: str, big_endian: bool = True):
-    address = ord(data)
+def encode_braille_byte(data: int):
+    if data < 0 or data > 255:
+        raise ValueError(f"Input is out of range for uint8 (0 - 255): {data}")
+    
+    address = (data & 0b00000001) << 7
+    address |= (data & 0b00000010) << 4
+    address |= (data & 0b00000100) << 2
+    address |= (data & 0b00001000)
+    address |= (data & 0b00010000) << 2
+    address |= (data & 0b00100000) >> 3
+    address |= (data & 0b01000000) >> 5
+    address |= (data & 0b10000000) >> 7
+    
+    address += BASE_ADDRESS
+
+    return chr(address)
+
+
+def decode_braille_byte(braille: str):
+    address = ord(braille)
 
     if not is_braille_byte(address):
-        raise ValueError(f"Input is not a valid Unicode braille character (0x{BASE_ADDRESS:x} - 0x{MAX_ADDRESS:x}): \"{data}\" (Code point 0x{address:x})")
+        raise ValueError(f"Input is not a valid Unicode braille character (0x{BASE_ADDRESS:x} - 0x{MAX_ADDRESS:x}): \"{braille}\" (Code point 0x{address:x})")
     
     address -= BASE_ADDRESS
 
-    block_a = (address & 0b10000000) >> 7
-    block_b = (address & 0b01000000) >> 6
-
-    sub_address_a = (address & 0b00111000) >> 3
-    sub_address_b = address & 0b00000111
-
-    data_out = (block_a << 7) | (sub_address_a << 4) | (block_b << 3) | sub_address_b
+    data = (address & 0b10000000) >> 7
+    data |= (address & 0b00100000) >> 4
+    data |= (address & 0b00010000) >> 2
+    data |= (address & 0b00001000)
+    data |= (address & 0b01000000) >> 2
+    data |= (address & 0b00000100) << 3
+    data |= (address & 0b00000010) << 5
+    data |= (address & 0b00000001) << 7
     
-    if big_endian:
-        data_out = endian_swap_byte(data_out)
-    
-    return data_out
+    return data
 
 
 # Multi-Byte Functions
-def encode_braille(data: bytearray, big_endian: bool = True):
-    braille = ""
-    for byte in data:
-        braille += encode_braille_byte(byte, big_endian=big_endian)
-    
-    return braille
-
-
 def is_braille(data: str):
     if len(data) == 0:
         return False
@@ -96,10 +64,18 @@ def is_braille(data: str):
     return True
 
 
-def decode_braille(data: str, big_endian: bool = True):
-    values = bytearray()
+def encode_braille(data: bytearray):
+    braille = ""
+    for byte in data:
+        braille += encode_braille_byte(byte)
     
-    for char in data:
-        values.append(decode_braille_byte(char, big_endian=big_endian))
+    return braille
+
+
+def decode_braille(braille: str):
+    data = bytearray()
     
-    return values
+    for char in braille:
+        data.append(decode_braille_byte(char))
+    
+    return data
